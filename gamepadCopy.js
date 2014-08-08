@@ -12,19 +12,23 @@
 //
 // @include        http://*
 // @include        https://*
+// @grant GM_addStyle
 // ==/UserScript==
 
 
 
 console.log("this is working");
 
-$("a:focus").css("background-color", "#ff0"); //see it working when :focus isent there
+GM_addStyle("a{background-color :yellow !important;}");
+
 (function() {
     console.log("inside function");
     // These buttons are for a NES retrolink gamepad.
     // Should really be using input.js or something to support more devices.
     var axisX = 4,
         axisY = 5,
+        L1 = 4,
+        R1 = 5
         buttonGo = [1, 2],
         buttonBack = [8],
         buttonForward = [9],
@@ -49,7 +53,8 @@ $("a:focus").css("background-color", "#ff0"); //see it working when :focus isent
         if(isUp === 0){ return}
         window.scrollBy(0,isUp*scrollSpeed);
     }
-    function onX(isRight) { //work in projess
+    /*
+    function onX(isRight) {
        //console.log("isRight");
         var links = $("a"),
             indx = (links.index($("a:focus").first()) >= 0 ) || 0;
@@ -57,7 +62,26 @@ $("a:focus").css("background-color", "#ff0"); //see it working when :focus isent
         links.eq((indx + isRight) % links.length).focus();
       //console.log("isRight");
     }
-
+    */
+    function changeFocus(left,right){ //if the left and right button have ben pressed then they will return 1;
+        var direction = 0;
+        if(left.pressed){
+            direction = -1;
+        }
+        if(right.pressed){
+            direction = 1;
+        }
+            
+        if(!direction){
+            var links = $("a"),
+                indx = (links.index($("a:focus").first()) >= 0 ) || 0;
+                //console.log(indx);
+            links.eq((indx + direction) % links.length).focus();
+            $("a").first().focus();
+        }
+        
+    }
+    
     function reportOnGamepad(){
         //console.log("start");
         var gp = navigator.getGamepads()[0]; //bet i can makes this better for more controllers
@@ -80,6 +104,9 @@ $("a:focus").css("background-color", "#ff0"); //see it working when :focus isent
         var axesLSUpDown = direction(gp.axes[0]);
         var axesLSLeftRight = direction(gp.axes[1]);
         onY(axesLSUpDown);
+        //console.log(gp.buttons[L1]);
+        //changeFocus(gp.buttons[L1],gp.buttons[R1]);
+        
         //onX(axesLSLeftRight);
         //console.log(axesLSUpDown);
       
@@ -129,4 +156,9 @@ $("a:focus").css("background-color", "#ff0"); //see it working when :focus isent
         console.log("doesn't have gamepad support");
     }
 })();
+
+
+
+
+
 
