@@ -18,8 +18,8 @@
 
 console.log("this is working");
 
-//GM_addStyle("a:focus { background-color: #ff0; !important }");
 
+$("a").css("background-color", "#ff0)
 console.log("Past GM");
 (function() {
     console.log("inside function");
@@ -171,115 +171,6 @@ console.log("Past GM");
         console.log("doesn't have gamepad support");
     }
 })();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var haveEvents = 'GamepadEvent' in window;
-var controllers = {};
-var rAF = window.mozRequestAnimationFrame ||
-  window.webkitRequestAnimationFrame ||
-  window.requestAnimationFrame;
-
-function connecthandler(e) {
-  addgamepad(e.gamepad);
-}
-function addgamepad(gamepad) {
-    {//creates the controller
-    }
-  rAF(updateStatus);
-}
-
-function disconnecthandler(e) {
-  removegamepad(e.gamepad);
-}
-
-function removegamepad(gamepad) {
-  var d = document.getElementById("controller" + gamepad.index);
-  document.body.removeChild(d);
-  delete controllers[gamepad.index];
-}
-
-function updateStatus() {
-  if (!haveEvents) {
-    scangamepads();
-  }
-  for (j in controllers) {
-    var controller = controllers[j];
-    var d = document.getElementById("controller" + j);
-    var buttons = d.getElementsByClassName("button");
-    for (var i=0; i<controller.buttons.length; i++) {
-      var b = buttons[i];
-      var val = controller.buttons[i];
-      var pressed = val == 1.0;
-      if (typeof(val) == "object") {
-        pressed = val.pressed;
-        val = val.value;
-      }
-      var pct = Math.round(val * 100) + "%"
-      b.style.backgroundSize = pct + " " + pct;
-      if (pressed) {
-        b.className = "button pressed";
-      } else {
-        b.className = "button";
-      }
-    }
-
-    var axes = d.getElementsByClassName("axis");
-    for (var i=0; i<controller.axes.length; i++) {
-      var a = axes[i];
-      a.innerHTML = i + ": " + controller.axes[i].toFixed(4);
-      a.setAttribute("value", controller.axes[i] + 1);
-    }
-  }
-  rAF(updateStatus);
-}
-
-function scangamepads() {
-  var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
-  for (var i = 0; i < gamepads.length; i++) {
-    if (gamepads[i]) {
-      if (!(gamepads[i].index in controllers)) {
-        addgamepad(gamepads[i]);
-      } else {
-        controllers[gamepads[i].index] = gamepads[i];
-      }
-    }
-  }
-}
-
-window.addEventListener("gamepadconnected", connecthandler);
-window.addEventListener("gamepaddisconnected", disconnecthandler);
-if (!haveEvents) {
-  setInterval(scangamepads, 500);
-}
-
-
-
-
-
-
-
-
-
 
 
 
